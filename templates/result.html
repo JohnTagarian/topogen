@@ -4,112 +4,425 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ผลลัพธ์ — AI Network Topology Generator</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: { sans: ['Kanit', 'sans-serif'] } } }
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.30.4/cytoscape.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js"></script>
+  <style>
+    .text-gradient {
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    #cy-container {
+      width: 100%;
+      height: 520px;
+      border-radius: 0.75rem;
+      background: #f8fafc;
+    }
+  </style>
 </head>
-<body>
-  <div class="container">
-    <header>
-      <h1>🌐 AI Network Topology Generator</h1>
-      <a href="/" class="back-link">← ออกแบบใหม่</a>
-    </header>
+<body class="min-h-screen bg-slate-50 py-10 px-4 font-sans">
+
+  <!-- Background decorations -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-cyan-100 rounded-full opacity-30 blur-3xl"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-100 rounded-full opacity-30 blur-3xl"></div>
+  </div>
+
+  <div class="relative max-w-5xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">
+          <span class="text-gradient">AI</span> Network Topology Generator
+        </h1>
+        <p class="text-sm text-slate-400 mt-0.5">ผลลัพธ์การออกแบบเครือข่าย</p>
+      </div>
+      <a href="/"
+         class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-blue-600 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-200 px-4 py-2 rounded-xl transition-all duration-150 shadow-sm">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        ออกแบบใหม่
+      </a>
+    </div>
 
     {% if error %}
-    <div class="error-box">
-      <strong>เกิดข้อผิดพลาด:</strong><br>{{ error }}
+    <!-- Error state -->
+    <div class="bg-red-50 border border-red-200 rounded-2xl p-6 flex items-start gap-4 mb-6">
+      <div class="shrink-0 w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+        <svg class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="font-semibold text-red-800">เกิดข้อผิดพลาด</p>
+        <p class="text-sm text-red-600 mt-1">{{ error }}</p>
+      </div>
     </div>
-    <a href="/" class="btn-generate" style="display:inline-block;text-decoration:none;text-align:center;margin-top:1rem;">← ลองใหม่</a>
+    <a href="/" class="inline-flex items-center gap-2 text-sm font-semibold text-white px-5 py-2.5 rounded-xl"
+       style="background: linear-gradient(135deg, #06b6d4, #3b82f6)">
+      ← ลองใหม่
+    </a>
 
     {% else %}
 
-    <!-- Section 1: Diagram -->
-    <section class="card">
-      <h2>📊 Network Topology Diagram</h2>
-      <p class="meta">
-        <strong>{{ topology.topology_name }}</strong> &nbsp;|&nbsp;
-        Type: <span class="badge">{{ topology.topology_type }}</span>
-      </p>
-      <div class="diagram-wrap">
-        <img src="data:image/png;base64,{{ diagram_b64 }}" alt="Network Topology Diagram">
+    <!-- ── Section 1: Network Diagram ── -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-5">
+      <!-- Section header -->
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-9 h-9 rounded-xl bg-cyan-50 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-base font-semibold text-slate-800">Network Topology Diagram</h2>
+          <div class="flex items-center gap-2 mt-0.5">
+            <span class="text-sm text-slate-500 font-medium">{{ topology.topology_name }}</span>
+            <span class="inline-block bg-cyan-100 text-cyan-800 font-semibold px-3 py-0.5 rounded-full text-xs uppercase tracking-wide">
+              {{ topology.topology_type }}
+            </span>
+          </div>
+        </div>
       </div>
+
+      <!-- Toolbar -->
+      <div class="flex items-center gap-2 mb-3 flex-wrap">
+        <div class="flex items-center rounded-lg border border-slate-200 overflow-hidden shadow-sm bg-white">
+          <button type="button" id="btn-fit"
+                  class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors border-r border-slate-200 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+            </svg>
+            Fit
+          </button>
+          <button type="button" id="btn-zoom-in"
+                  class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors border-r border-slate-200">
+            + Zoom In
+          </button>
+          <button type="button" id="btn-zoom-out"
+                  class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+            − Zoom Out
+          </button>
+        </div>
+
+        <!-- Legend -->
+        <div class="ml-auto flex items-center gap-4 text-xs text-slate-400">
+          <span class="flex items-center gap-1.5">
+            <span class="w-6 border-t-2 border-slate-400 inline-block"></span>
+            Ethernet / Fiber
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-6 inline-block" style="border-top: 2px dashed #60a5fa;"></span>
+            Wireless / VPN
+          </span>
+        </div>
+      </div>
+
+      <!-- Graph (DO NOT MODIFY IDs or structure below) -->
+      <div id="cy-container" class="border border-slate-200 rounded-xl"></div>
     </section>
 
-    <!-- Section 2: Design Notes -->
-    <section class="card">
-      <h2>📝 Design Summary</h2>
-      <p>{{ topology.notes }}</p>
+    <!-- ── Section 2: Design Summary ── -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-5">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h2 class="text-base font-semibold text-slate-800">Design Summary</h2>
+      </div>
+
+      <p class="text-sm text-slate-600 leading-relaxed mb-5">{{ topology.notes }}</p>
+
       {% if topology.subnets %}
-      <table>
-        <thead><tr><th>Subnet</th><th>CIDR</th><th>VLAN ID</th></tr></thead>
-        <tbody>
-        {% for subnet in topology.subnets %}
-          <tr>
-            <td>{{ subnet.name }}</td>
-            <td><code>{{ subnet.cidr }}</code></td>
-            <td>{{ subnet.vlan_id }}</td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
+      <div class="overflow-hidden rounded-xl border border-slate-200">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200">
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Subnet</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">CIDR</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">VLAN ID</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {% for subnet in topology.subnets %}
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="px-4 py-3 text-slate-700 font-medium flex items-center gap-2">
+                <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                </svg>
+                {{ subnet.name }}
+              </td>
+              <td class="px-4 py-3">
+                <code class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-xs font-mono">{{ subnet.cidr }}</code>
+              </td>
+              <td class="px-4 py-3">
+                <span class="inline-block bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-0.5 rounded-full text-xs">
+                  VLAN {{ subnet.vlan_id }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
       {% endif %}
     </section>
 
-    <!-- Section 3: BOM -->
-    <section class="card">
-      <h2>🛒 Bill of Materials</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Brand / Model</th>
-            <th>Specs</th>
-            <th>Qty</th>
-            <th>Unit Price (THB)</th>
-            <th>Subtotal (THB)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in bom['items'] %}
-          <tr>
-            <td>{{ item.category }}</td>
-            <td><strong>{{ item.brand }}</strong><br><small>{{ item.name }}</small></td>
-            <td><small>{{ item.specs }}</small></td>
-            <td style="text-align:center">{{ item.qty }}</td>
-            <td style="text-align:right">{{ item.unit_price_thb | thousands }}</td>
-            <td style="text-align:right"><strong>{{ item.subtotal_thb | thousands }}</strong></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="5" style="text-align:right"><strong>รวมทั้งหมด (ก่อน VAT)</strong></td>
-            <td style="text-align:right"><strong>{{ bom['total_thb'] | thousands }} ฿</strong></td>
-          </tr>
-          <tr>
-            <td colspan="5" style="text-align:right">VAT 7%</td>
-            <td style="text-align:right">{{ (bom['total_thb'] * 0.07) | int | thousands }} ฿</td>
-          </tr>
-          <tr class="total-row">
-            <td colspan="5" style="text-align:right"><strong>รวมทั้งหมด (รวม VAT)</strong></td>
-            <td style="text-align:right"><strong>{{ (bom['total_thb'] * 1.07) | int | thousands }} ฿</strong></td>
-          </tr>
-        </tfoot>
-      </table>
+    <!-- ── Section 3: Bill of Materials ── -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-5">
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-9 h-9 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+        </div>
+        <h2 class="text-base font-semibold text-slate-800">Bill of Materials</h2>
+      </div>
+
+      <div class="overflow-hidden rounded-xl border border-slate-200">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200">
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Category</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Brand / Model</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Specs</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Qty</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Unit Price (฿)</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Subtotal (฿)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {% for item in bom['items'] %}
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="px-4 py-3">
+                <span class="inline-block bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-md font-medium">{{ item.category }}</span>
+              </td>
+              <td class="px-4 py-3">
+                <span class="font-semibold text-slate-800">{{ item.brand }}</span>
+                <br>
+                <span class="text-xs text-slate-400">{{ item.name }}</span>
+              </td>
+              <td class="px-4 py-3 text-xs text-slate-500 max-w-xs">{{ item.specs }}</td>
+              <td class="px-4 py-3 text-center font-semibold text-slate-700">{{ item.qty }}</td>
+              <td class="px-4 py-3 text-right text-slate-600">{{ item.unit_price_thb | thousands }}</td>
+              <td class="px-4 py-3 text-right font-semibold text-slate-800">{{ item.subtotal_thb | thousands }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr class="border-t border-slate-200 bg-slate-50">
+              <td colspan="5" class="px-4 py-3 text-right text-sm text-slate-500">รวมทั้งหมด (ก่อน VAT)</td>
+              <td class="px-4 py-3 text-right font-semibold text-slate-700">{{ bom['total_thb'] | thousands }} ฿</td>
+            </tr>
+            <tr class="bg-slate-50">
+              <td colspan="5" class="px-4 py-2 text-right text-xs text-slate-400">VAT 7%</td>
+              <td class="px-4 py-2 text-right text-xs text-slate-400">{{ (bom['total_thb'] * 0.07) | int | thousands }} ฿</td>
+            </tr>
+            <tr class="border-t-2 border-cyan-200 bg-cyan-50">
+              <td colspan="5" class="px-4 py-3.5 text-right text-sm font-bold text-slate-700">รวมทั้งหมด (รวม VAT)</td>
+              <td class="px-4 py-3.5 text-right text-base font-bold text-cyan-700">{{ (bom['total_thb'] * 1.07) | int | thousands }} ฿</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </section>
 
-    <!-- Section 4: Debug (collapsible) -->
-    <section class="card">
-      <details>
-        <summary>🔍 Parsed Requirements (JSON)</summary>
-        <pre>{{ parsed_params | tojson(indent=2) }}</pre>
+    <!-- ── Section 4: Debug (collapsible) ── -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mb-5">
+      <details class="group">
+        <summary class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors list-none select-none">
+          <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+          Parsed Requirements (JSON)
+        </summary>
+        <pre class="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-600 overflow-x-auto leading-relaxed font-mono whitespace-pre-wrap">{{ parsed_params | tojson(indent=2) }}</pre>
       </details>
     </section>
 
-    <section class="card">
-      <details>
-        <summary>🔍 Raw Topology JSON</summary>
-        <pre>{{ topology | tojson(indent=2) }}</pre>
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mb-8">
+      <details class="group">
+        <summary class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors list-none select-none">
+          <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+          Raw Topology JSON
+        </summary>
+        <pre class="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-600 overflow-x-auto leading-relaxed font-mono whitespace-pre-wrap">{{ topology | tojson(indent=2) }}</pre>
       </details>
     </section>
+
+    <!-- ═══════════════════════════════════════════
+         GRAPH LOGIC — DO NOT MODIFY IDs OR LOGIC
+    ════════════════════════════════════════════ -->
+    <script>
+    (function() {
+      var topoData = {{ topology_json | safe }};
+
+      // --- SVG icon factory ---
+      var ICONS = {
+        cloud: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><path d="M52 34c0-6.6-5.4-12-12-12-.7 0-1.4.1-2.1.2C35.7 16.3 30.3 12 24 12c-7.7 0-14 6.3-14 14 0 .5 0 1 .1 1.5C5.6 29 2 33.4 2 38.5 2 44.3 6.7 49 12.5 49h37c5.8 0 10.5-4.7 10.5-10.5 0-2.5-.9-4.8-2.4-6.5H52z" fill="#78909C" stroke="#546E7A" stroke-width="2"/></svg>',
+        router: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="32" r="26" fill="#1565C0" stroke="#0D47A1" stroke-width="2"/><path d="M32 14v36M14 32h36M20 20l24 24M44 20L20 44" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="32" r="6" fill="#fff"/></svg>',
+        switch: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect x="4" y="20" width="56" height="24" rx="4" fill="#2E7D32" stroke="#1B5E20" stroke-width="2"/><line x1="20" y1="28" x2="20" y2="36" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="28" y1="28" x2="28" y2="36" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="36" y1="28" x2="36" y2="36" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="44" y1="28" x2="44" y2="36" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="12" cy="32" r="3" fill="#4CAF50"/></svg>',
+        firewall: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect x="6" y="10" width="52" height="44" rx="4" fill="#C62828" stroke="#B71C1C" stroke-width="2"/><rect x="6" y="10" width="52" height="22" rx="4" fill="#E53935" stroke="none"/><line x1="6" y1="32" x2="58" y2="32" stroke="#B71C1C" stroke-width="2"/><rect x="14" y="18" width="8" height="6" rx="1" fill="#fff" opacity="0.9"/><rect x="28" y="18" width="8" height="6" rx="1" fill="#fff" opacity="0.9"/><rect x="42" y="18" width="8" height="6" rx="1" fill="#fff" opacity="0.9"/><rect x="14" y="38" width="8" height="6" rx="1" fill="#fff" opacity="0.6"/><rect x="28" y="38" width="8" height="6" rx="1" fill="#fff" opacity="0.6"/><rect x="42" y="38" width="8" height="6" rx="1" fill="#fff" opacity="0.6"/></svg>',
+        server: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect x="12" y="6" width="40" height="52" rx="4" fill="#37474F" stroke="#263238" stroke-width="2"/><rect x="18" y="12" width="28" height="10" rx="2" fill="#546E7A"/><rect x="18" y="26" width="28" height="10" rx="2" fill="#546E7A"/><rect x="18" y="40" width="28" height="10" rx="2" fill="#546E7A"/><circle cx="22" cy="17" r="2" fill="#4CAF50"/><circle cx="22" cy="31" r="2" fill="#4CAF50"/><circle cx="22" cy="45" r="2" fill="#FFC107"/><line x1="28" y1="17" x2="42" y2="17" stroke="#90A4AE" stroke-width="2"/><line x1="28" y1="31" x2="42" y2="31" stroke="#90A4AE" stroke-width="2"/><line x1="28" y1="45" x2="42" y2="45" stroke="#90A4AE" stroke-width="2"/></svg>',
+        access_point: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><path d="M20 40 Q32 28 44 40" fill="none" stroke="#1565C0" stroke-width="3" stroke-linecap="round"/><path d="M14 46 Q32 26 50 46" fill="none" stroke="#1565C0" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/><path d="M8 52 Q32 24 56 52" fill="none" stroke="#1565C0" stroke-width="2" stroke-linecap="round" opacity="0.3"/><circle cx="32" cy="44" r="5" fill="#1565C0"/><rect x="28" y="48" width="8" height="10" rx="2" fill="#37474F"/></svg>',
+        pc: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect x="8" y="8" width="48" height="34" rx="3" fill="#455A64" stroke="#37474F" stroke-width="2"/><rect x="12" y="12" width="40" height="26" rx="1" fill="#90CAF9"/><rect x="24" y="44" width="16" height="4" fill="#546E7A"/><rect x="18" y="48" width="28" height="4" rx="2" fill="#607D8B"/></svg>',
+        printer: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect x="14" y="8" width="36" height="14" rx="2" fill="#fff" stroke="#455A64" stroke-width="2"/><rect x="8" y="22" width="48" height="22" rx="3" fill="#607D8B" stroke="#455A64" stroke-width="2"/><rect x="14" y="44" width="36" height="12" rx="2" fill="#fff" stroke="#455A64" stroke-width="2"/><circle cx="48" cy="30" r="2" fill="#4CAF50"/></svg>',
+        ups: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect x="14" y="8" width="36" height="48" rx="4" fill="#FF8F00" stroke="#E65100" stroke-width="2"/><path d="M36 20L28 36h8l-4 16 12-20h-8l4-12z" fill="#fff"/></svg>'
+      };
+
+      function getIconKey(type) {
+        var map = {
+          'router': 'router', 'switch': 'switch', 'firewall': 'firewall',
+          'server': 'server', 'access_point': 'access_point', 'pc': 'pc',
+          'printer': 'printer', 'cloud': 'cloud', 'ups': 'ups'
+        };
+        return map[type] || 'switch';
+      }
+
+      var LAYER_ORDER = { 'core': 0, 'distribution': 1, 'access': 2, 'endpoint': 3 };
+      var elements = [];
+
+      (topoData.nodes || []).forEach(function(node) {
+        var iconKey = getIconKey(node.type);
+        var svgData = 'data:image/svg+xml;base64,' + btoa(ICONS[iconKey]);
+        var layerRank = LAYER_ORDER[node.layer] !== undefined ? LAYER_ORDER[node.layer] : 2;
+        elements.push({
+          group: 'nodes',
+          data: {
+            id: node.id,
+            label: node.label || node.id,
+            type: node.type,
+            layer: node.layer,
+            layerRank: layerRank,
+            icon: svgData
+          }
+        });
+      });
+
+      (topoData.links || []).forEach(function(link, i) {
+        var isWireless = (link.link_type === 'wireless' || link.link_type === 'vpn');
+        elements.push({
+          group: 'edges',
+          data: {
+            id: 'e' + i,
+            source: link.source,
+            target: link.target,
+            label: link.label || '',
+            bandwidth: link.bandwidth || '',
+            linkType: link.link_type || 'ethernet',
+            isWireless: isWireless
+          }
+        });
+      });
+
+      var cy = cytoscape({
+        container: document.getElementById('cy-container'),
+        elements: elements,
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'width': 56,
+              'height': 56,
+              'background-image': 'data(icon)',
+              'background-fit': 'contain',
+              'background-color': '#fff',
+              'background-opacity': 0,
+              'label': 'data(label)',
+              'text-valign': 'bottom',
+              'text-halign': 'center',
+              'text-margin-y': 8,
+              'font-size': '11px',
+              'font-family': 'Kanit, -apple-system, sans-serif',
+              'font-weight': 600,
+              'color': '#334155',
+              'text-wrap': 'wrap',
+              'text-max-width': '100px',
+              'border-width': 0,
+              'overlay-padding': 6
+            }
+          },
+          {
+            selector: 'edge',
+            style: {
+              'width': 2.5,
+              'line-color': '#94a3b8',
+              'target-arrow-color': '#94a3b8',
+              'curve-style': 'bezier',
+              'label': 'data(bandwidth)',
+              'font-size': '9px',
+              'color': '#94a3b8',
+              'text-rotation': 'autorotate',
+              'text-margin-y': -10,
+              'text-background-color': '#fff',
+              'text-background-opacity': 0.9,
+              'text-background-padding': '2px'
+            }
+          },
+          {
+            selector: 'edge[?isWireless]',
+            style: {
+              'line-style': 'dashed',
+              'line-dash-pattern': [8, 4],
+              'line-color': '#60a5fa',
+              'target-arrow-color': '#60a5fa'
+            }
+          },
+          {
+            selector: 'edge:active',
+            style: { 'overlay-color': '#06b6d4', 'overlay-opacity': 0.15 }
+          },
+          {
+            selector: 'node:active',
+            style: { 'overlay-color': '#06b6d4', 'overlay-opacity': 0.2 }
+          }
+        ],
+        layout: {
+          name: 'dagre',
+          rankDir: 'TB',
+          nodeSep: 60,
+          rankSep: 100,
+          edgeSep: 30,
+          align: 'UL',
+          ranker: 'network-simplex',
+          sort: function(a, b) {
+            return (a.data('layerRank') || 0) - (b.data('layerRank') || 0);
+          }
+        },
+        minZoom: 0.3,
+        maxZoom: 3,
+        wheelSensitivity: 0.3
+      });
+
+      document.getElementById('btn-fit').addEventListener('click', function() {
+        cy.fit(null, 40);
+      });
+      document.getElementById('btn-zoom-in').addEventListener('click', function() {
+        cy.zoom({ level: cy.zoom() * 1.3, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } });
+      });
+      document.getElementById('btn-zoom-out').addEventListener('click', function() {
+        cy.zoom({ level: cy.zoom() / 1.3, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } });
+      });
+
+      cy.on('layoutstop', function() { cy.fit(null, 40); });
+    })();
+    </script>
 
     {% endif %}
   </div>
