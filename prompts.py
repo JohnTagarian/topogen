@@ -33,7 +33,7 @@ Output MUST be valid JSON matching this schema exactly:
       "type": "<router|switch|firewall|server|access_point|pc|printer|cloud>",
       "layer": "<core|distribution|access|endpoint>",
       "specs": {
-        "model_hint": "<enterprise_router|smb_router|core_switch|distribution_switch|access_switch|poe_switch|enterprise_firewall|smb_firewall|rack_server|nas_storage|access_point|ups|rack_cabinet>",
+        "model_hint": "<enterprise_router|smb_router|core_switch|access_switch|poe_switch|enterprise_firewall|smb_firewall|rack_server|access_point|ups>",
         "ports_needed": <integer>,
         "bandwidth": "<e.g. 1Gbps>"
       }
