@@ -1,0 +1,72 @@
+{
+  "enterprise_router": {
+    "name": "Cisco ISR 4331",
+    "brand": "Cisco",
+    "category": "Router",
+    "price_thb": 45000,
+    "specs": "3x GE, throughput 300Mbps, IPSec VPN"
+  },
+  "smb_router": {
+    "name": "MikroTik hAP ax3",
+    "brand": "MikroTik",
+    "category": "Router",
+    "price_thb": 3500,
+    "specs": "5x GE, WiFi 6, RouterOS"
+  },
+  "core_switch": {
+    "name": "Cisco Catalyst 9300-48T",
+    "brand": "Cisco",
+    "category": "Switch",
+    "price_thb": 85000,
+    "specs": "48x GE, 4x 10G SFP+, L3, stackable"
+  },
+  "access_switch": {
+    "name": "Cisco Catalyst 1000-24T",
+    "brand": "Cisco",
+    "category": "Switch",
+    "price_thb": 12000,
+    "specs": "24x GE, 4x SFP, L2"
+  },
+  "poe_switch": {
+    "name": "Cisco CBS250-24P",
+    "brand": "Cisco",
+    "category": "Switch (PoE)",
+    "price_thb": 18000,
+    "specs": "24x GE PoE+, 4x SFP, 195W budget"
+  },
+  "enterprise_firewall": {
+    "name": "Fortinet FortiGate 60F",
+    "brand": "Fortinet",
+    "category": "Firewall",
+    "price_thb": 35000,
+    "specs": "10x GE, 700Mbps FW throughput, UTM"
+  },
+  "smb_firewall": {
+    "name": "Fortinet FortiGate 40F",
+    "brand": "Fortinet",
+    "category": "Firewall",
+    "price_thb": 15000,
+    "specs": "5x GE, 200Mbps FW throughput"
+  },
+  "rack_server": {
+    "name": "Dell PowerEdge R350",
+    "brand": "Dell",
+    "category": "Server",
+    "price_thb": 55000,
+    "specs": "Xeon E-2300, 1U, RAID support"
+  },
+  "access_point": {
+    "name": "Ubiquiti U6-Pro",
+    "brand": "Ubiquiti",
+    "category": "Access Point",
+    "price_thb": 5500,
+    "specs": "WiFi 6, 2x2 MIMO, PoE powered"
+  },
+  "ups": {
+    "name": "APC Smart-UPS 1500VA",
+    "brand": "APC",
+    "category": "UPS",
+    "price_thb": 15000,
+    "specs": "1500VA/1000W, line-interactive"
+  }
+}

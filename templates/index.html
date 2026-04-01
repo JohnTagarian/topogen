@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Network Topology Generator</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🌐 AI Network Topology Generator</h1>
+      <p class="subtitle">อธิบายความต้องการเครือข่ายของคุณ แล้วให้ AI ออกแบบให้</p>
+    </header>
+
+    {% if error %}
+    <div class="error-box">⚠️ {{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/generate" id="main-form">
+      <div class="examples">
+        <span class="examples-label">ตัวอย่าง:</span>
+        <button type="button" class="chip" onclick="fillExample(this)">ออฟฟิศ 3 ชั้น ชั้นละ 30 คน มี Server Room ต้องการ WiFi ทุกชั้น</button>
+        <button type="button" class="chip" onclick="fillExample(this)">โรงเรียน 200 คน ต้องการ internet และ file server</button>
+        <button type="button" class="chip" onclick="fillExample(this)">โรงงาน 3 อาคาร พนักงาน 100 คน ต้องการ VoIP และ CCTV</button>
+        <button type="button" class="chip" onclick="fillExample(this)">Small office 10 users, need internet and WiFi, budget 50000 THB</button>
+      </div>
+
+      <textarea
+        name="user_input"
+        id="user_input"
+        rows="5"
+        placeholder="พิมพ์ความต้องการเครือข่ายของคุณที่นี่ (ภาษาไทยหรืออังกฤษ)&#10;เช่น: ออฟฟิศ 2 ชั้น พนักงาน 50 คน ต้องการ WiFi และ internet"
+        required
+      ></textarea>
+
+      <button type="submit" class="btn-generate" id="submit-btn">
+        <span id="btn-text">✨ Generate Topology</span>
+        <span id="btn-loading" style="display:none">⏳ กำลังออกแบบ...</span>
+      </button>
+    </form>
+  </div>
+
+  <script>
+    function fillExample(btn) {
+      document.getElementById('user_input').value = btn.textContent.trim();
+    }
+    document.getElementById('main-form').addEventListener('submit', function() {
+      document.getElementById('btn-text').style.display = 'none';
+      document.getElementById('btn-loading').style.display = 'inline';
+      document.getElementById('submit-btn').disabled = true;
+    });
+  </script>
+</body>
+</html>

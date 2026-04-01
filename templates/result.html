@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ผลลัพธ์ — AI Network Topology Generator</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🌐 AI Network Topology Generator</h1>
+      <a href="/" class="back-link">← ออกแบบใหม่</a>
+    </header>
+
+    {% if error %}
+    <div class="error-box">
+      <strong>เกิดข้อผิดพลาด:</strong><br>{{ error }}
+    </div>
+    <a href="/" class="btn-generate" style="display:inline-block;text-decoration:none;text-align:center;margin-top:1rem;">← ลองใหม่</a>
+
+    {% else %}
+
+    <!-- Section 1: Diagram -->
+    <section class="card">
+      <h2>📊 Network Topology Diagram</h2>
+      <p class="meta">
+        <strong>{{ topology.topology_name }}</strong> &nbsp;|&nbsp;
+        Type: <span class="badge">{{ topology.topology_type }}</span>
+      </p>
+      <div class="diagram-wrap">
+        <img src="data:image/png;base64,{{ diagram_b64 }}" alt="Network Topology Diagram">
+      </div>
+    </section>
+
+    <!-- Section 2: Design Notes -->
+    <section class="card">
+      <h2>📝 Design Summary</h2>
+      <p>{{ topology.notes }}</p>
+      {% if topology.subnets %}
+      <table>
+        <thead><tr><th>Subnet</th><th>CIDR</th><th>VLAN ID</th></tr></thead>
+        <tbody>
+        {% for subnet in topology.subnets %}
+          <tr>
+            <td>{{ subnet.name }}</td>
+            <td><code>{{ subnet.cidr }}</code></td>
+            <td>{{ subnet.vlan_id }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </section>
+
+    <!-- Section 3: BOM -->
+    <section class="card">
+      <h2>🛒 Bill of Materials</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Brand / Model</th>
+            <th>Specs</th>
+            <th>Qty</th>
+            <th>Unit Price (THB)</th>
+            <th>Subtotal (THB)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in bom['items'] %}
+          <tr>
+            <td>{{ item.category }}</td>
+            <td><strong>{{ item.brand }}</strong><br><small>{{ item.name }}</small></td>
+            <td><small>{{ item.specs }}</small></td>
+            <td style="text-align:center">{{ item.qty }}</td>
+            <td style="text-align:right">{{ item.unit_price_thb | thousands }}</td>
+            <td style="text-align:right"><strong>{{ item.subtotal_thb | thousands }}</strong></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5" style="text-align:right"><strong>รวมทั้งหมด (ก่อน VAT)</strong></td>
+            <td style="text-align:right"><strong>{{ bom['total_thb'] | thousands }} ฿</strong></td>
+          </tr>
+          <tr>
+            <td colspan="5" style="text-align:right">VAT 7%</td>
+            <td style="text-align:right">{{ (bom['total_thb'] * 0.07) | int | thousands }} ฿</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="5" style="text-align:right"><strong>รวมทั้งหมด (รวม VAT)</strong></td>
+            <td style="text-align:right"><strong>{{ (bom['total_thb'] * 1.07) | int | thousands }} ฿</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </section>
+
+    <!-- Section 4: Debug (collapsible) -->
+    <section class="card">
+      <details>
+        <summary>🔍 Parsed Requirements (JSON)</summary>
+        <pre>{{ parsed_params | tojson(indent=2) }}</pre>
+      </details>
+    </section>
+
+    <section class="card">
+      <details>
+        <summary>🔍 Raw Topology JSON</summary>
+        <pre>{{ topology | tojson(indent=2) }}</pre>
+      </details>
+    </section>
+
+    {% endif %}
+  </div>
+</body>
+</html>
