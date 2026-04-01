@@ -1,72 +1,262 @@
 {
   "enterprise_router": {
-    "name": "Cisco ISR 4331",
-    "brand": "Cisco",
     "category": "Router",
-    "price_thb": 45000,
-    "specs": "3x GE, throughput 300Mbps, IPSec VPN"
+    "description": "เร้าเตอร์ประสิทธิภาพสูงสำหรับองค์กรขนาดกลาง-ใหญ่",
+    "options": [
+      {
+        "name": "Cisco ISR 4331",
+        "brand": "Cisco",
+        "price_thb": 45000,
+        "specs": "3x GE, throughput 300Mbps, IPSec VPN",
+        "form_factor": "1U Rackmount"
+      },
+      {
+        "name": "Juniper SRX340",
+        "brand": "Juniper",
+        "price_thb": 42000,
+        "specs": "16x GE, throughput 3 Gbps, Next-Gen Firewall features",
+        "form_factor": "1U Rackmount"
+      }
+    ]
   },
   "smb_router": {
-    "name": "MikroTik hAP ax3",
-    "brand": "MikroTik",
     "category": "Router",
-    "price_thb": 3500,
-    "specs": "5x GE, WiFi 6, RouterOS"
+    "description": "เร้าเตอร์สำหรับสำนักงานขนาดเล็กหรือสาขา",
+    "options": [
+      {
+        "name": "MikroTik hAP ax3",
+        "brand": "MikroTik",
+        "price_thb": 3500,
+        "specs": "5x GE, WiFi 6, RouterOS, PoE in/out",
+        "form_factor": "Desktop"
+      },
+      {
+        "name": "Ubiquiti EdgeRouter 4",
+        "brand": "Ubiquiti",
+        "price_thb": 7500,
+        "specs": "3x GE, 1x SFP, 3.4 million pps",
+        "form_factor": "Desktop/Rackmountable"
+      }
+    ]
   },
   "core_switch": {
-    "name": "Cisco Catalyst 9300-48T",
-    "brand": "Cisco",
     "category": "Switch",
-    "price_thb": 85000,
-    "specs": "48x GE, 4x 10G SFP+, L3, stackable"
+    "description": "สวิตช์แกนหลักระดับ Layer 3 ความเร็วสูง",
+    "options": [
+      {
+        "name": "Cisco Catalyst 9300-48T",
+        "brand": "Cisco",
+        "price_thb": 85000,
+        "specs": "48x GE, 4x 10G SFP+, L3, Stackable, UADP ASIC",
+        "form_factor": "1U Rackmount"
+      },
+      {
+        "name": "Aruba CX 6300M",
+        "brand": "HPE Aruba",
+        "price_thb": 82000,
+        "specs": "48x GE, 4x 10G/50G SFP, L3, Stackable",
+        "form_factor": "1U Rackmount"
+      }
+    ]
+  },
+  "distribution_switch": {
+    "category": "Switch",
+    "description": "สวิตช์รวมศูนย์เชื่อมต่อระหว่าง Core และ Access",
+    "options": [
+      {
+        "name": "Cisco Catalyst 9200L-48P-4G",
+        "brand": "Cisco",
+        "price_thb": 45000,
+        "specs": "48x GE PoE+, 4x 1G SFP, L2/L3 Basic",
+        "form_factor": "1U Rackmount"
+      },
+      {
+        "name": "Aruba 2930F 48G PoE+ 4SFP",
+        "brand": "HPE Aruba",
+        "price_thb": 40000,
+        "specs": "48x GE PoE+, 4x 1G SFP, L3 Static routing",
+        "form_factor": "1U Rackmount"
+      }
+    ]
   },
   "access_switch": {
-    "name": "Cisco Catalyst 1000-24T",
-    "brand": "Cisco",
     "category": "Switch",
-    "price_thb": 12000,
-    "specs": "24x GE, 4x SFP, L2"
+    "description": "สวิตช์เชื่อมต่อผู้ใช้งานทั่วไป (Non-PoE)",
+    "options": [
+      {
+        "name": "Cisco Catalyst 1000-24T",
+        "brand": "Cisco",
+        "price_thb": 12000,
+        "specs": "24x GE, 4x SFP, L2",
+        "form_factor": "1U Rackmount"
+      },
+      {
+        "name": "TP-Link TL-SG3428",
+        "brand": "TP-Link",
+        "price_thb": 4500,
+        "specs": "24x GE, 4x SFP, L2+ Managed",
+        "form_factor": "1U Rackmount"
+      }
+    ]
   },
   "poe_switch": {
-    "name": "Cisco CBS250-24P",
-    "brand": "Cisco",
     "category": "Switch (PoE)",
-    "price_thb": 18000,
-    "specs": "24x GE PoE+, 4x SFP, 195W budget"
+    "description": "สวิตช์จ่ายไฟผ่านสายแลนสำหรับ AP และ IP Camera",
+    "options": [
+      {
+        "name": "Cisco CBS250-24P",
+        "brand": "Cisco",
+        "price_thb": 18000,
+        "specs": "24x GE PoE+, 4x SFP, 195W budget",
+        "form_factor": "1U Rackmount"
+      },
+      {
+        "name": "Ubiquiti UniFi Switch PRO 24 PoE",
+        "brand": "Ubiquiti",
+        "price_thb": 24000,
+        "specs": "24x GE PoE+, 2x 10G SFP+, 400W budget, L3 features",
+        "form_factor": "1U Rackmount"
+      }
+    ]
   },
   "enterprise_firewall": {
-    "name": "Fortinet FortiGate 60F",
-    "brand": "Fortinet",
     "category": "Firewall",
-    "price_thb": 35000,
-    "specs": "10x GE, 700Mbps FW throughput, UTM"
+    "description": "ไฟร์วอลล์ความปลอดภัยสูงสำหรับองค์กร",
+    "options": [
+      {
+        "name": "Fortinet FortiGate 60F",
+        "brand": "Fortinet",
+        "price_thb": 35000,
+        "specs": "10x GE, 700Mbps FW throughput, UTM, SD-WAN",
+        "form_factor": "Desktop"
+      },
+      {
+        "name": "Palo Alto PA-410",
+        "brand": "Palo Alto",
+        "price_thb": 45000,
+        "specs": "7x GE, 1Gbps FW throughput, Threat Prevention",
+        "form_factor": "Desktop"
+      }
+    ]
   },
   "smb_firewall": {
-    "name": "Fortinet FortiGate 40F",
-    "brand": "Fortinet",
     "category": "Firewall",
-    "price_thb": 15000,
-    "specs": "5x GE, 200Mbps FW throughput"
+    "description": "ไฟร์วอลล์สำหรับสาขาหรือสำนักงานขนาดเล็ก",
+    "options": [
+      {
+        "name": "Fortinet FortiGate 40F",
+        "brand": "Fortinet",
+        "price_thb": 15000,
+        "specs": "5x GE, 200Mbps FW throughput",
+        "form_factor": "Desktop"
+      },
+      {
+        "name": "Sophos XGS 87",
+        "brand": "Sophos",
+        "price_thb": 13500,
+        "specs": "4x GE, 3.7Gbps FW throughput (Base)",
+        "form_factor": "Desktop"
+      }
+    ]
   },
   "rack_server": {
-    "name": "Dell PowerEdge R350",
-    "brand": "Dell",
     "category": "Server",
-    "price_thb": 55000,
-    "specs": "Xeon E-2300, 1U, RAID support"
+    "description": "เซิร์ฟเวอร์แบบแร็คสำหรับติดตั้งใน Server Room",
+    "options": [
+      {
+        "name": "Dell PowerEdge R350",
+        "brand": "Dell",
+        "price_thb": 55000,
+        "specs": "Xeon E-2300, 16GB RAM, 1U, RAID support",
+        "form_factor": "1U Rackmount"
+      },
+      {
+        "name": "HPE ProLiant DL320 Gen11",
+        "brand": "HPE",
+        "price_thb": 58000,
+        "specs": "Xeon Scalable, 32GB RAM, 1U, iLO 6",
+        "form_factor": "1U Rackmount"
+      }
+    ]
+  },
+  "nas_storage": {
+    "category": "Storage",
+    "description": "อุปกรณ์จัดเก็บข้อมูลเครือข่ายสำหรับแชร์ไฟล์และแบ็คอัป",
+    "options": [
+      {
+        "name": "Synology RS822+",
+        "brand": "Synology",
+        "price_thb": 38000,
+        "specs": "4-bay Rackmount NAS, AMD Ryzen V1500B",
+        "form_factor": "1U Rackmount"
+      },
+      {
+        "name": "QNAP TS-432PXU",
+        "brand": "QNAP",
+        "price_thb": 32000,
+        "specs": "4-bay Rackmount NAS, 2x 10GbE SFP+",
+        "form_factor": "1U Rackmount"
+      }
+    ]
   },
   "access_point": {
-    "name": "Ubiquiti U6-Pro",
-    "brand": "Ubiquiti",
     "category": "Access Point",
-    "price_thb": 5500,
-    "specs": "WiFi 6, 2x2 MIMO, PoE powered"
+    "description": "จุดกระจายสัญญาณไร้สาย",
+    "options": [
+      {
+        "name": "Ubiquiti U6-Pro",
+        "brand": "Ubiquiti",
+        "price_thb": 5500,
+        "specs": "WiFi 6, 4x4 MIMO, PoE powered, 300+ clients",
+        "form_factor": "Ceiling Mount"
+      },
+      {
+        "name": "Aruba Instant On AP22",
+        "brand": "HPE Aruba",
+        "price_thb": 6000,
+        "specs": "WiFi 6, 2x2 MIMO, Cloud managed",
+        "form_factor": "Ceiling Mount"
+      }
+    ]
   },
   "ups": {
-    "name": "APC Smart-UPS 1500VA",
-    "brand": "APC",
     "category": "UPS",
-    "price_thb": 15000,
-    "specs": "1500VA/1000W, line-interactive"
+    "description": "เครื่องสำรองไฟกันไฟตกไฟกระชาก",
+    "options": [
+      {
+        "name": "APC Smart-UPS 1500VA",
+        "brand": "APC",
+        "price_thb": 15000,
+        "specs": "1500VA/1000W, line-interactive, SmartSlot",
+        "form_factor": "Tower/Rack Convertible"
+      },
+      {
+        "name": "CyberPower PR1500RT2U",
+        "brand": "CyberPower",
+        "price_thb": 12500,
+        "specs": "1500VA/1500W, Pure Sine Wave",
+        "form_factor": "2U Rackmount"
+      }
+    ]
+  },
+  "rack_cabinet": {
+    "category": "Infrastructure",
+    "description": "ตู้แร็คเก็บอุปกรณ์",
+    "options": [
+      {
+        "name": "19-inch 42U Server Rack",
+        "brand": "Generic/Local",
+        "price_thb": 15000,
+        "specs": "42U, 600x1000mm, Perforated doors",
+        "form_factor": "Floor Standing"
+      },
+      {
+        "name": "19-inch 12U Wall Mount Rack",
+        "brand": "Generic/Local",
+        "price_thb": 4500,
+        "specs": "12U, 600x600mm, Glass door",
+        "form_factor": "Wall Mount"
+      }
+    ]
   }
 }

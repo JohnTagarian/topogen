@@ -30,18 +30,21 @@ def generate_bom(topology: dict) -> dict:
     total = 0
 
     for hint, qty in hint_counts.items():
-        if hint in db:
-            eq = db[hint]
-            subtotal = eq["price_thb"] * qty
+        if hint in db and db[hint].get("options"):
+            eq_info = db[hint]
+            # Pick the first option as the default
+            default_option = eq_info["options"][0]
+            
+            subtotal = default_option["price_thb"] * qty
             total += subtotal
             items.append({
                 "model_hint": hint,
-                "name": eq["name"],
-                "brand": eq["brand"],
-                "category": eq["category"],
-                "specs": eq["specs"],
+                "name": default_option["name"],
+                "brand": default_option["brand"],
+                "category": eq_info["category"],
+                "specs": default_option["specs"],
                 "qty": qty,
-                "unit_price_thb": eq["price_thb"],
+                "unit_price_thb": default_option["price_thb"],
                 "subtotal_thb": subtotal,
             })
         else:
@@ -60,6 +63,8 @@ def generate_bom(topology: dict) -> dict:
     items.sort(key=lambda x: x["subtotal_thb"], reverse=True)
 
     return {"items": items, "total_thb": total}
+
+
 
 
 if __name__ == "__main__":
